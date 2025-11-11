@@ -1,18 +1,31 @@
 from datetime import date
 from io import BytesIO
 from typing import List, Optional
+from pathlib import Path
 
 import pandas as pd
 import requests
 from pandas import DataFrame
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_colwidth", None)
 
 
-def get_data(link: str):
+def get_data(link: str, save_dir: str = "./downloads"):
+    Path(save_dir).mkdir(parents=True, exist_ok=True)
+
+    filename = link.split("/")[-1]
+    file_path = Path(save_dir) / filename
+
     response = requests.get(link)
-    data = response.content
-    byty_file = BytesIO(data)
-    df = pd.read_excel(byty_file, engine="xlrd")
-    return df
+    response.raise_for_status()
+    with open(file_path, "wb") as f:
+        f.write(response.content)
+
+    df = pd.read_excel(file_path, header=None, engine="xlrd")
+
+    file_path.unlink()
+
+    return df, filename
 
 
 def get_date_from_file_name():
@@ -22,6 +35,9 @@ def get_date_from_file_name():
 def extract_table(
     df_raw: DataFrame, target_phrase: str = "Единица измерения: Метрическая тонна"
 ) -> DataFrame:
+
+    print(df_raw.loc[2])
+
     mask = df_raw.apply(
         lambda row: row.astype(str)
         .str.contains("Единица измерения:", case=False, na=False)

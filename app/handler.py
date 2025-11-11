@@ -12,7 +12,7 @@ from models import ExchangeProduct
 from utils import extract_table, filter_needed_columns, get_data
 
 
-def df_to_models(df: DataFrame) -> list[ExchangeProduct]:
+def df_to_models(df: DataFrame, date_) -> list[ExchangeProduct]:
     """ возвращает список ExchangeProduct вытаскивая их из DataFrame """
     today = datetime.now().date()
 
@@ -28,7 +28,7 @@ def df_to_models(df: DataFrame) -> list[ExchangeProduct]:
             volume=float(row["Объем\nДоговоров\nв единицах\nизмерения"]),
             total=float(row["Обьем\nДоговоров,\nруб."]),
             count=int(row["Количество\nДоговоров,\nшт."]),
-            date=current_date,
+            date=date_,
             created_on=today,
             updated_on=today,
         )
