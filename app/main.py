@@ -11,6 +11,8 @@ async def lifespan(app: FastAPI):
     run_migrations()
     yield
 
+
 app = FastAPI(lifespan=lifespan)
+
 
 app.include_router(router)
