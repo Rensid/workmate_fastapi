@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import insert
 from parser import parse_page_links
 from base import get_async_session
 from models import ExchangeProduct
-from utils import extract_table, filter_needed_columns, get_data
+from utils import extract_table, filter_needed_columns, get_data, get_date_from_file_name
 
 
 def df_to_models(df: DataFrame, date_) -> list[ExchangeProduct]:
@@ -46,7 +46,8 @@ async def fetch_page(url: str) -> str:
 async def get_raw_data(file_url: str, date_: date):
     """ Получает данные из HTML, вытаскивает нужную таблицу,
     фильтрует по колонке и возврает объекты модели"""
-    content = get_data(file_url)
+    content, filename = get_data(file_url)
+    date_ = get_date_from_file_name(filename)
     table = extract_table(content)
     table = filter_needed_columns(table)
     return df_to_models(table, date_)

@@ -1,7 +1,8 @@
-from datetime import date
+from datetime import date, datetime
 from io import BytesIO
 from typing import List, Optional
 from pathlib import Path
+import re
 
 import pandas as pd
 import requests
@@ -28,15 +29,19 @@ def get_data(link: str, save_dir: str = "./downloads"):
     return df, filename
 
 
-def get_date_from_file_name():
-    pass
-
+def get_date_from_file_name(filename):
+    match = re.search(r"(\d{4})(\d{2})(\d{2})", filename)
+    if match:
+        year, month, day = match.groups()
+        file_date = f"{day}.{month}.{year}"
+        format_string = "%d.%m.%Y"
+        date_object = datetime.strptime(file_date, format_string).date()
+        return date_object
+    return None
 
 def extract_table(
     df_raw: DataFrame, target_phrase: str = "Единица измерения: Метрическая тонна"
 ) -> DataFrame:
-
-    print(df_raw.loc[2])
 
     mask = df_raw.apply(
         lambda row: row.astype(str)
