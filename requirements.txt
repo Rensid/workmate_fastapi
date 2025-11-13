@@ -6,6 +6,8 @@ amqp==5.3.1
 annotated-doc==0.0.3
 annotated-types==0.7.0
 anyio==4.11.0
+APScheduler==3.11.1
+async-timeout==5.0.1
 asyncpg==0.30.0
 attrs==25.4.0
 beautifulsoup4==4.14.2
@@ -19,7 +21,8 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1.2
 click-repl==0.3.0
 colorama==0.4.6
-fastapi==0.121.0
+fastapi==0.121.1
+fastapi-cache2==0.2.2
 frozenlist==1.8.0
 greenlet==3.2.4
 h11==0.16.0
@@ -31,6 +34,7 @@ multidict==6.7.0
 numpy==2.3.4
 packaging==25.0
 pandas==2.3.3
+pendulum==3.1.0
 prompt_toolkit==3.0.52
 propcache==0.4.1
 psycopg2==2.9.11
@@ -48,6 +52,7 @@ starlette==0.49.3
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzdata==2025.2
+tzlocal==5.3.1
 urllib3==2.5.0
 uvicorn==0.38.0
 vine==5.1.0
