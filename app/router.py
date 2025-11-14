@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
 from datetime import date
@@ -5,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.handler import get_data_from_url
 from app.schema import ExchangeProductAll, ExchangeProductFilter
-from app.views import view_get_dynamics, view_last_trading_dates
+from app.views import view_get_dynamics, view_last_trading_dates, view_trading_results
 from base import get_async_session
 
 
@@ -26,7 +27,7 @@ async def get_last_trading_dates(session: AsyncSession = Depends(get_async_sessi
     return result
 
 
-@router.get("/get_dynamics/", response_model=ExchangeProductAll)
+@router.get("/get_dynamics/", response_model=List[ExchangeProductAll])
 @cache()
 async def get_dynamics(
     product: ExchangeProductFilter,
@@ -39,8 +40,12 @@ async def get_dynamics(
     return result
 
 
-@router.get("/get_trading_results/")
+@router.get("/get_trading_results/", response_model=List[ExchangeProductAll])
 @cache()
-async def get_trading_results(session: AsyncSession = Depends(get_async_session)):
+async def get_trading_results(
+    product: ExchangeProductFilter, session: AsyncSession = Depends(get_async_session)
+):
     # список последних торгов (фильтрация по oil_id, delivery_type_id, delivery_basis_id)
-    pass
+    result = await view_trading_results(product, session)
+
+    return result
