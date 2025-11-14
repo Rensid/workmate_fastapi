@@ -1,7 +1,8 @@
+from typing import AsyncGenerator
 from alembic import command
 from alembic.config import Config
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from config import SYNC_DATABASE, DATABASE
 from contextlib import asynccontextmanager
 
@@ -15,13 +16,9 @@ engine = create_async_engine(
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
-@asynccontextmanager
-async def get_async_session():
-    session = async_session()
-    try:
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
         yield session
-    finally:
-        await session.close()
 
 
 class Base(DeclarativeBase):
