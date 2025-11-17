@@ -1,16 +1,13 @@
 from typing import AsyncGenerator
 from alembic import command
+from typing import AsyncGenerator
 from alembic.config import Config
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from config import SYNC_DATABASE, DATABASE
-from contextlib import asynccontextmanager
 
 engine = create_async_engine(
     DATABASE,
-    echo=False,
-    pool_size=5,
-    max_overflow=10,
     pool_pre_ping=True,
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False)
