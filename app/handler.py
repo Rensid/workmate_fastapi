@@ -50,10 +50,13 @@ async def fetch_page(url: str) -> str:
 async def get_raw_data(file_url: str, date_: date):
     """Получает данные из HTML, вытаскивает нужную таблицу,
     фильтрует по колонке и возврает объекты модели"""
-    content, filename = get_data(file_url)
-    date_ = get_date_from_file_name(filename)
-    table = extract_table(content)
-    table = filter_needed_columns(table)
+    try:
+        content, filename = await get_data(file_url)
+        date_ = await asyncio.to_thread(get_date_from_file_name, filename)
+        table = await extract_table(content)
+        table = await filter_needed_columns(table)
+    except Exception as e:
+        print("e")
     return df_to_models(table, date_)
 
 
@@ -78,6 +81,7 @@ async def process_link(link, session):
 
 
 async def get_data_from_url(session: AsyncSession):
+    start = datetime.now()
     url = "https://spimex.com/markets/oil_products/trades/results/"
     html = await fetch_page(url)
 
@@ -92,3 +96,4 @@ async def get_data_from_url(session: AsyncSession):
             await process_link(link, session)
 
     await asyncio.gather(*(limited(link) for link in links))
+    print(datetime.now() - start)
