@@ -30,7 +30,7 @@ async def get_data(link: str, save_dir: str = "./downloads"):
     return df, filename
 
 
-async def get_date_from_file_name(filename):
+def get_date_from_file_name(filename):
     match = re.search(r"(\d{4})(\d{2})(\d{2})", filename)
     if match:
         year, month, day = match.groups()
