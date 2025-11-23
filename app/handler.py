@@ -1,3 +1,4 @@
+from multiprocessing import Process, Queue
 from sqlalchemy.ext.asyncio import AsyncSession
 import aiohttp
 import asyncio
@@ -47,13 +48,30 @@ async def fetch_page(url: str) -> str:
             return await resp.text()
 
 
+def worker(q, content):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    async def main():
+        table = await extract_table(content)
+        table = await filter_needed_columns(table)
+        return table
+
+    result = loop.run_until_complete(main())
+    loop.close()
+    q.put(result)
+
+
 async def get_raw_data(file_url: str, date_: date):
     """Получает данные из HTML, вытаскивает нужную таблицу,
     фильтрует по колонке и возврает объекты модели"""
-    content, filename = get_data(file_url)
+    content, filename = await get_data(file_url)
     date_ = get_date_from_file_name(filename)
-    table = extract_table(content)
-    table = filter_needed_columns(table)
+    q = Queue()
+    p = Process(target=worker, args=(q, content))
+    p.start()
+    p.join()
+    table = q.get()
     return df_to_models(table, date_)
 
 
@@ -71,13 +89,14 @@ async def save_to_db(products: List[ExchangeProduct]):
         await session.commit()
 
 
-async def process_link(link, session):
+async def process_link(link):
     file_url, file_date = link
-    products = await get_raw_data(file_url, file_date)
-    await save_to_db(products)
+    products: List[ExchangeProduct] = await get_raw_data(file_url, file_date)
+    return products
 
 
-async def get_data_from_url(session: AsyncSession):
+async def get_data_from_url():
+    start = datetime.now()
     url = "https://spimex.com/markets/oil_products/trades/results/"
     html = await fetch_page(url)
 
@@ -89,6 +108,11 @@ async def get_data_from_url(session: AsyncSession):
 
     async def limited(link):
         async with sem:
-            await process_link(link, session)
+            return await process_link(link)
 
-    await asyncio.gather(*(limited(link) for link in links))
+    results = await asyncio.gather(*(limited(link) for link in links))
+
+    products = [item for group in results for item in group]
+
+    await save_to_db(products)
+    print(datetime.now() - start)

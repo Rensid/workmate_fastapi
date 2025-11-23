@@ -15,8 +15,8 @@ router = APIRouter()
 
 @router.get("/fill_base/")
 @cache()
-async def fill_db(session: AsyncSession = Depends(get_async_session)):
-    await get_data_from_url(session)
+async def fill_db():
+    await get_data_from_url()
 
 
 @router.get("/get_last_trading_dates/")

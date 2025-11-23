@@ -6,3 +6,5 @@ DATABASE = os.getenv(
 SYNC_DATABASE = os.getenv(
     "SYNC_DATABASE", "postgresql://postgres:z1SJm3mUVU@localhost:55533/postgres"
 )
+
+NUM_OF_LAST_FIELDS = os.getenv("NUM_OF_LAST_FIELDS", 5)
