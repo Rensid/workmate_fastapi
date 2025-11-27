@@ -21,10 +21,6 @@ class Base(DeclarativeBase):
     pass
 
 
-def init_models():
-    Base.metadata.create_all(bind=engine)
-
-
 def run_migrations() -> None:
     alembic_cfg = Config()
     alembic_cfg.set_main_option("script_location", "migrations")
