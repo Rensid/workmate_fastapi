@@ -19,7 +19,7 @@ async def fill_db():
     await get_data_from_url()
 
 
-@router.get("/get_last_trading_dates/")
+@router.get("/get_last_trading_dates")
 @cache()
 async def get_last_trading_dates(session: AsyncSession = Depends(get_async_session)):
     # список дат последних торговых дней (фильтрация по кол-ву последних торговых дней).
@@ -27,12 +27,12 @@ async def get_last_trading_dates(session: AsyncSession = Depends(get_async_sessi
     return result
 
 
-@router.get("/get_dynamics/", response_model=List[ExchangeProductAll])
+@router.get("/get_dynamics", response_model=List[ExchangeProductAll])
 @cache()
 async def get_dynamics(
-    product: ExchangeProductFilter,
     start_date: date,
     end_date: date,
+    product: ExchangeProductFilter = Depends(),
     session: AsyncSession = Depends(get_async_session),
 ):
     # список торгов за заданный период (фильтрация по oil_id, delivery_type_id, delivery_basis_id, start_date, end_date).
@@ -40,10 +40,11 @@ async def get_dynamics(
     return result
 
 
-@router.get("/get_trading_results/", response_model=List[ExchangeProductAll])
+@router.get("/get_trading_results", response_model=List[ExchangeProductAll])
 @cache()
 async def get_trading_results(
-    product: ExchangeProductFilter, session: AsyncSession = Depends(get_async_session)
+    product: ExchangeProductFilter = Depends(),
+    session: AsyncSession = Depends(get_async_session),
 ):
     # список последних торгов (фильтрация по oil_id, delivery_type_id, delivery_basis_id)
     result = await view_trading_results(product, session)
