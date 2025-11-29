@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import redis
+import redis.asyncio as redis
 
 
 class Settings(BaseSettings):
