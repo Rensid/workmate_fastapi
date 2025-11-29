@@ -19,12 +19,10 @@ class ExchangeProduct(Base):
     )
     exchange_product_name: Mapped[str] = mapped_column(String, nullable=False)
 
-    oil_id: Mapped[str] = mapped_column(
-        String(4), nullable=False
-    )
-    delivery_basis_id: Mapped[int] = mapped_column(Integer)
+    oil_id: Mapped[str] = mapped_column(String, nullable=False)
+    delivery_basis_id: Mapped[str] = mapped_column(String)
     delivery_basis_name: Mapped[str] = mapped_column(String, nullable=False)
-    delivery_type_id: Mapped[int] = mapped_column(Integer)
+    delivery_type_id: Mapped[str] = mapped_column(String)
 
     volume: Mapped[Optional[float]] = mapped_column(Float)
     total: Mapped[Optional[float]] = mapped_column(Float)
@@ -32,22 +30,16 @@ class ExchangeProduct(Base):
 
     date: Mapped[date] = mapped_column(Date, nullable=False)
 
-    created_on: Mapped[date_field] 
+    created_on: Mapped[date_field]
     updated_on: Mapped[Annotated[date_field, mapped_column(onupdate=datetime.utcnow)]]
 
     def __repr__(self) -> str:
         return (
-            f"<ExchangeProduct(id={self.id}, name={
-                self.exchange_product_name!r}, "
-            f"date={self.date}, exchange_product_id={
-                self.exchange_product_id!r})>"
+            f"<ExchangeProduct(id={self.id}, name={self.exchange_product_name!r}, "
+            f"date={self.date}, exchange_product_id={self.exchange_product_id!r})>"
         )
 
     def to_dict(self):
-
-        product_dict = {
-            c.name: getattr(self, c.name)
-            for c in self.__table__.columns
-        }
+        product_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         product_dict.pop("id")
         return product_dict
