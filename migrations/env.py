@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 
 from base import Base
-from config import SYNC_DATABASE
+from config import settings
 from models import ExchangeProduct
 
 from sqlalchemy import engine_from_config
@@ -14,7 +14,7 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 section = config.config_ini_section
-config.set_section_option(section, "sqlalchemy.url", SYNC_DATABASE)
+config.set_section_option(section, "sqlalchemy.url", settings.get_db_url("sync"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

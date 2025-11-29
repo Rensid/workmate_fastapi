@@ -1,16 +1,36 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DATABASE = os.getenv(
-    "DATABASE", "postgresql+asyncpg://postgres:z1SJm3mUVU@localhost:55533/postgres"
-)
-SYNC_DATABASE = os.getenv(
-    "SYNC_DATABASE", "postgresql://postgres:z1SJm3mUVU@localhost:55533/postgres"
-)
 
-TEST_DATABASE = os.getenv(
-    "TEST_DATABASE", "postgresql+asyncpg://postgres:z1SJm3mUVU@localhost:55533/test_db"
-)
-TEST_SYNC_DATABASE = os.getenv(
-    "TEST_SYNC_DATABASE", "postgresql://postgres:z1SJm3mUVU@localhost:55533/test_db"
-)
-NUM_OF_LAST_FIELDS = os.getenv("NUM_OF_LAST_FIELDS", 5)
+class Settings(BaseSettings):
+
+    DB_HOST: str
+    DB_NAME: str
+    DB_PORT: int
+    DB_USER: str
+    DB_PASS: str
+    TEST_DB_NAME: str
+    REDIS_HOST: str
+    REDIS_PORT: int
+    NUM_OF_LAST_FIELDS: int = 5
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
+
+    def get_db_url(self, type_of_db):
+        if type_of_db == "async":
+            return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        else:
+            return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        
+    def get_test_db(self, type_of_db):
+        if type_of_db == "async":
+            return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        else:
+            return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+
+
+
+settings = Settings()

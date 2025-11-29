@@ -7,10 +7,10 @@ from typing import List
 from pandas import DataFrame
 from sqlalchemy.dialects.postgresql import insert
 
-from parser import parse_page_links
+from app.parser.parser import parse_page_links
 from base import async_session
 from models import ExchangeProduct
-from utils import (
+from app.parser.utils import (
     extract_table,
     filter_needed_columns,
     get_data,

@@ -4,7 +4,7 @@ from fastapi_cache.decorator import cache
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.handler import get_data_from_url
+from app.parser.handler import get_data_from_url
 from app.schema import ExchangeProductAll, ExchangeProductFilter
 from app.views import view_get_dynamics, view_last_trading_dates, view_trading_results
 from base import get_async_session

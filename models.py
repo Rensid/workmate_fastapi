@@ -1,10 +1,12 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Annotated, Optional
 
 from sqlalchemy import Date, DateTime, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from base import Base
+
+date_field = Annotated[date, mapped_column(DateTime, default=datetime.utcnow)]
 
 
 class ExchangeProduct(Base):
@@ -20,13 +22,9 @@ class ExchangeProduct(Base):
     oil_id: Mapped[str] = mapped_column(
         String(4), nullable=False
     )
-    delivery_basis_id: Mapped[str] = mapped_column(
-        String(3), nullable=False
-    )
+    delivery_basis_id: Mapped[int] = mapped_column(Integer)
     delivery_basis_name: Mapped[str] = mapped_column(String, nullable=False)
-    delivery_type_id: Mapped[str] = mapped_column(
-        String(1), nullable=False
-    )
+    delivery_type_id: Mapped[int] = mapped_column(Integer)
 
     volume: Mapped[Optional[float]] = mapped_column(Float)
     total: Mapped[Optional[float]] = mapped_column(Float)
@@ -34,11 +32,8 @@ class ExchangeProduct(Base):
 
     date: Mapped[date] = mapped_column(Date, nullable=False)
 
-    created_on: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow)
-    updated_on: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    created_on: Mapped[date_field] 
+    updated_on: Mapped[Annotated[date_field, mapped_column(onupdate=datetime.utcnow)]]
 
     def __repr__(self) -> str:
         return (
