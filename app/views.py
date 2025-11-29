@@ -1,7 +1,7 @@
 from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schema import ExchangeProductFilter
-from config import NUM_OF_LAST_FIELDS
+from config import settings
 from models import ExchangeProduct
 
 
@@ -55,7 +55,7 @@ async def view_trading_results(product: ExchangeProductFilter, session: AsyncSes
         query = (
             query.filter(and_(*statements))
             .order_by(desc(ExchangeProduct.date))
-            .limit(NUM_OF_LAST_FIELDS)
+            .limit(settings.NUM_OF_LAST_FIELDS)
         )
 
     result = await session.execute(query)
