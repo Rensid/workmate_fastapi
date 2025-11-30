@@ -8,15 +8,15 @@ class ExchangeProductBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ExchangeProductFilter(ExchangeProductBase):
-    oil_id: int
-    delivery_basis_id: int
+class ExchangeProductFilter(BaseModel):
+    oil_id: str
+    delivery_basis_id: str
     delivery_type_id: str
 
 
 class ExchangeProductAll(ExchangeProductFilter):
     delivery_basis_name: str
-    exchange_product_id: int
+    exchange_product_id: str
     exchange_product_name: str
     volume: float
     total: float

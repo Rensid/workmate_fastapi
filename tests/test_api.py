@@ -13,6 +13,7 @@ app.dependency_overrides[get_async_session] = get_test_async_session
 
 
 @pytest.mark.anyio
+@pytest.mark.parametrize("")
 async def test_get_last_trading_dates(run_migrations):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://localhost:8000"
